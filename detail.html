@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - Ardan Ridho</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Lenis Smooth Scroll Library -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <!-- Modern typography matching index.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Core Physics & Framer-like Easing */
+        :root {
+            --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.8s var(--spring-smooth), color 0.8s var(--spring-smooth);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* LIQUID GLASS DESIGN SYSTEM */
+        .light { 
+            --bg-base: #f1f5f9;
+            --text-primary: #0f172a; 
+            --text-secondary: #475569;
+            
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-hover: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-border-highlight: rgba(0, 0, 0, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.08);
+            
+            --element-bg: rgba(255, 255, 255, 0.6);
+            --element-border: rgba(0, 0, 0, 0.06);
+            
+            --orb-1: #bae6fd; --orb-2: #e0e7ff; --orb-3: #fce7f3;
+            
+            --code-bg: rgba(15, 23, 42, 0.05);
+            --code-header: rgba(15, 23, 42, 0.1);
+        }
+        
+        .dark { 
+            --bg-base: #020617; 
+            --text-primary: #f8fafc; 
+            --text-secondary: #94a3b8; 
+            
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-bg-hover: rgba(30, 41, 59, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
+            
+            --element-bg: rgba(30, 41, 59, 0.4);
+            --element-border: rgba(255, 255, 255, 0.05);
+            
+            --orb-1: #0369a1; --orb-2: #3730a3; --orb-3: #0f172a;
+            
+            --code-bg: rgba(15, 23, 42, 0.6);
+            --code-header: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Ambient Liquid Mesh Background */
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            overflow: hidden; pointer-events: none;
+            background-color: var(--bg-base);
+            transition: background-color 0.8s var(--spring-smooth);
+        }
+        
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; animation: float 24s infinite ease-in-out alternate;
+            transition: background-color 1s ease; mix-blend-mode: normal;
+        }
+        .dark .orb { opacity: 0.4; filter: blur(100px); }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--orb-1); }
+        .orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--orb-2); animation-delay: -8s; }
+        .orb-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: var(--orb-3); animation-delay: -16s; }
+
+        @keyframes float { 
+            0% { transform: translate(0, 0) scale(1); } 
+            33% { transform: translate(10%, -10%) scale(1.1); }
+            66% { transform: translate(-5%, 15%) scale(0.9); }
+            100% { transform: translate(5%, 5%) scale(1.05); } 
+        }
+
+        /* Utility Classes */
+        .glass-panel { 
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+            transition: all 0.5s var(--spring-smooth);
+        }
+        .glass-element {
+            background: var(--element-bg); border: 1px solid var(--element-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+
+        .interactive-btn { transition: transform 0.4s var(--spring-bounce), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+        .interactive-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--glass-shadow-hover); }
+        .interactive-btn:active { transform: scale(0.96); }
+
+        .reveal { opacity: 0; transform: translateY(30px) scale(0.98); transition: opacity 1s var(--spring-smooth), transform 1s var(--spring-smooth); will-change: opacity, transform; }
+        .reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* Social Icon */
+        .social-glass-icon {
+            display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
+            background: var(--element-bg); border: 1px solid var(--element-border); color: var(--text-secondary); font-size: 1.1rem;
+            transition: all 0.4s var(--spring-bounce); backdrop-filter: blur(8px);
+        }
+        .social-glass-icon:hover {
+            background: var(--glass-bg-hover); transform: translateY(-5px) scale(1.1); color: var(--text-primary);
+            border-color: var(--glass-border-highlight); box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Modern Custom Cursor */
+        @media (pointer: fine) { body, a, button, .interactive-btn, .social-glass-icon { cursor: none !important; } }
+        
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 99999;
+            will-change: transform, width, height; transition: width 0.25s var(--spring-bounce), height 0.25s var(--spring-bounce), background-color 0.3s ease, border 0.3s ease;
+            background-color: #f8fafc; border: 1.5px solid transparent; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .light #custom-cursor { background-color: #0f172a; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        #custom-cursor.cursor-hover { width: 36px; height: 36px; background-color: transparent; border-color: #f8fafc; }
+        .light #custom-cursor.cursor-hover { border-color: #0f172a; }
+
+        /* Premium Skeleton Loader */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton-shimmer { background: linear-gradient(90deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite ease-in-out; }
+        .dark .skeleton-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite ease-in-out; }
+
+        /* Responsive Document Typography */
+        /* Mobile First Base */
+        .rich-text-content { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); letter-spacing: 0.01em; }
+        .rich-text-content > * { margin-bottom: 1.25rem; }
+        .rich-text-content h1, .rich-text-content h2, .rich-text-content h3, .rich-text-content h4 {
+            color: var(--text-primary); font-weight: 800; letter-spacing: -0.03em; line-height: 1.3; margin-top: 2.5rem; margin-bottom: 1rem;
+        }
+        .rich-text-content h1 { font-size: 1.8rem; }
+        .rich-text-content h2 { font-size: 1.5rem; }
+        .rich-text-content h3 { font-size: 1.25rem; }
+        .rich-text-content p { color: var(--text-secondary); }
+        .rich-text-content strong { color: var(--text-primary); font-weight: 700; }
+        
+        .rich-text-content a { color: #0ea5e9; font-weight: 600; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s ease; }
+        .rich-text-content a:hover { border-bottom-color: #0ea5e9; text-shadow: 0 0 12px rgba(14, 165, 233, 0.3); }
+        
+        .rich-text-content ul { list-style-type: none; padding-left: 0.5rem; margin-bottom: 1.25rem; }
+        .rich-text-content ul li { position: relative; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+        .rich-text-content ul li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background-color: #0ea5e9; opacity: 0.8; }
+        
+        .rich-text-content ol { list-style-type: decimal; padding-left: 1.25rem; margin-bottom: 1.25rem; }
+        .rich-text-content ol li { margin-bottom: 0.5rem; padding-left: 0.5rem; }
+        
+        .rich-text-content blockquote {
+            position: relative; padding: 1.25rem 1.5rem; margin: 2rem 0; border-radius: 1rem;
+            background: var(--element-bg); border: 1px solid var(--element-border);
+            color: var(--text-primary); font-style: italic; font-weight: 500; font-size: 1.05rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .rich-text-content blockquote::before { content: '"'; position: absolute; top: 0.5rem; left: 1rem; font-size: 2.5rem; color: #0ea5e9; opacity: 0.2; font-family: Georgia, serif; }
+        
+        .rich-text-content pre {
+            position: relative; background-color: var(--code-bg); color: #e2e8f0; border-radius: 1rem;
+            padding: 2.5rem 1rem 1rem 1rem; margin: 2rem 0; overflow-x: auto;
+            border: 1px solid var(--element-border); box-shadow: var(--glass-shadow); font-family: 'Fira Code', monospace; font-size: 0.85em; line-height: 1.6;
+        }
+        /* OS Window decoration for code blocks */
+        .rich-text-content pre::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1.8rem; background: var(--code-header); border-bottom: 1px solid var(--element-border);
+        }
+        .rich-text-content pre::after {
+            content: ''; position: absolute; top: 0.6rem; left: 0.8rem; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 14px 0 0 #eab308, 28px 0 0 #22c55e; opacity: 0.8;
+        }
+        
+        .rich-text-content code { background-color: var(--code-bg); padding: 0.2rem 0.4rem; font-size: 0.85em; border-radius: 0.4rem; font-family: 'Fira Code', monospace; border: 1px solid var(--element-border); color: var(--text-primary); }
+        
+        .rich-text-content img {
+            max-width: 100%; height: auto; display: block; margin: 2rem auto;
+            border-radius: 1rem; border: 1px solid var(--element-border);
+            box-shadow: var(--glass-shadow); transition: transform 0.6s var(--ease-out-expo); cursor: zoom-in;
+        }
+        .rich-text-content img:hover { transform: scale(1.02); }
+        
+        .rich-text-content .ql-video {
+            width: 100%; aspect-ratio: 16/9; border-radius: 1rem; margin: 2rem 0;
+            border: 1px solid var(--element-border); box-shadow: var(--glass-shadow);
+        }
+
+        /* Desktop Adjustments for Rich Text */
+        @media (min-width: 640px) {
+            .rich-text-content { font-size: 1.05rem; line-height: 1.85; }
+            .rich-text-content > * { margin-bottom: 1.75rem; }
+            .rich-text-content h1, .rich-text-content h2, .rich-text-content h3, .rich-text-content h4 { margin-top: 3.5rem; margin-bottom: 1.25rem; }
+            .rich-text-content h1 { font-size: 2.25rem; }
+            .rich-text-content h2 { font-size: 1.875rem; }
+            .rich-text-content h3 { font-size: 1.5rem; }
+            .rich-text-content ul { padding-left: 0.5rem; margin-bottom: 1.75rem; }
+            .rich-text-content ul li { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+            .rich-text-content ul li::before { top: 0.6rem; width: 6px; height: 6px; }
+            .rich-text-content ol { padding-left: 1.5rem; margin-bottom: 1.75rem; }
+            .rich-text-content ol li { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+            .rich-text-content blockquote { padding: 1.5rem 2rem; margin: 2.5rem 0; font-size: 1.15rem; }
+            .rich-text-content blockquote::before { top: 0.5rem; left: 1rem; font-size: 3rem; }
+            .rich-text-content pre { padding: 3rem 1.5rem 1.5rem 1.5rem; margin: 2.5rem 0; font-size: 0.9em; }
+            .rich-text-content pre::before { height: 2.2rem; }
+            .rich-text-content pre::after { top: 0.85rem; left: 1rem; width: 10px; height: 10px; box-shadow: 16px 0 0 #eab308, 32px 0 0 #22c55e; }
+            .rich-text-content img { margin: 3rem auto; border-radius: 1.5rem; }
+            .rich-text-content .ql-video { border-radius: 1.5rem; margin: 3rem 0; }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 10px; opacity: 0.5; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-primary); }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30 selection:text-sky-500 pb-16 sm:pb-20">
+
+    <!-- Minimal Custom Cursor -->
+    <div id="custom-cursor"></div>
+
+    <!-- Ambient Liquid Mesh Background -->
+    <div class="mesh-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Sleek Floating Nav Bar ("Dynamic Island" Style) -->
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass-panel px-3 py-2.5 rounded-[2rem] flex items-center justify-between gap-3 sm:gap-4 transition-all duration-500 w-[90vw] sm:w-fit sm:min-w-[300px] hover:shadow-2xl">
+        <!-- Back Button -->
+        <a href="index.html" class="interactive-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-secondary hover:text-primary shrink-0 transition-colors" aria-label="Go back">
+            <i class="fas fa-arrow-left text-[0.8rem] sm:text-[0.9rem]"></i>
+        </a>
+        
+        <!-- Document Title Indicator -->
+        <div class="flex-grow flex justify-center items-center overflow-hidden px-2">
+            <span id="nav-doc-title" class="text-[0.7rem] sm:text-[0.75rem] font-bold text-secondary uppercase tracking-widest truncate max-w-[180px] sm:max-w-[300px] transition-opacity duration-300">
+                Loading...
+            </span>
+        </div>
+        
+        <!-- Controls -->
+        <button id="theme-toggle" class="interactive-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-secondary hover:text-primary shrink-0 transition-colors" aria-label="Toggle theme">
+            <span class="theme-toggle-icon block text-[0.8rem] sm:text-[0.9rem]"><i class="fas fa-sun"></i></span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto pt-28 sm:pt-36 px-4 sm:px-8 relative z-10">
+
+        <!-- SKELETON LOADER STATE -->
+        <div id="skeleton-loader" class="w-full transition-all duration-700 absolute top-28 sm:top-36 left-0 px-4 sm:px-8 w-full z-20">
+            <div class="glass-panel rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-12 mb-10 w-full">
+                <!-- Header Skeletons -->
+                <div class="flex flex-wrap justify-center sm:justify-start gap-2 mb-6">
+                    <div class="h-6 w-20 skeleton-shimmer rounded-full"></div>
+                    <div class="h-6 w-24 skeleton-shimmer rounded-full"></div>
+                </div>
+                <div class="h-10 sm:h-12 w-full sm:w-3/4 skeleton-shimmer rounded-xl mb-4 mx-auto sm:mx-0"></div>
+                <div class="h-10 sm:h-12 w-2/3 sm:w-1/2 skeleton-shimmer rounded-xl mb-8 mx-auto sm:mx-0"></div>
+                
+                <div class="h-4 sm:h-5 w-full max-w-2xl skeleton-shimmer rounded-md mb-3 mx-auto sm:mx-0"></div>
+                <div class="h-4 sm:h-5 w-full max-w-xl skeleton-shimmer rounded-md mb-8 sm:mb-10 mx-auto sm:mx-0"></div>
+                
+                <!-- Meta Row Skeleton -->
+                <div class="flex flex-col sm:flex-row gap-4 py-5 border-t border-black/5 dark:border-white/5 mb-8 sm:mb-10">
+                    <div class="h-5 w-24 skeleton-shimmer rounded-md"></div>
+                    <div class="h-5 w-32 skeleton-shimmer rounded-md"></div>
+                    <div class="h-10 w-full sm:w-40 skeleton-shimmer rounded-xl sm:rounded-full sm:ml-auto mt-2 sm:mt-0"></div>
+                </div>
+
+                <!-- Banner Skeleton -->
+                <div class="w-full aspect-video skeleton-shimmer rounded-[1.5rem] sm:rounded-[2rem] mb-10 sm:mb-12"></div>
+
+                <!-- Content Skeletons -->
+                <div class="space-y-4 max-w-3xl mx-auto">
+                    <div class="h-4 sm:h-5 w-full skeleton-shimmer rounded-md"></div>
+                    <div class="h-4 sm:h-5 w-full skeleton-shimmer rounded-md"></div>
+                    <div class="h-4 sm:h-5 w-5/6 skeleton-shimmer rounded-md"></div>
+                    <div class="h-4 sm:h-5 w-4/5 skeleton-shimmer rounded-md"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTUAL CONTENT BLOCK (Hidden initially) -->
+        <article id="content-card" class="opacity-0 translate-y-8 transition-all duration-1000 ease-out z-10 relative">
+            
+            <!-- Article Wrapper (Full Glass Container) -->
+            <div class="glass-panel rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-12 shadow-2xl relative overflow-hidden group/article mb-10">
+                
+                <!-- Background ambient accent inside the card -->
+                <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-sky-500/10 dark:bg-sky-500/5 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+
+                <!-- 1. Header & Meta -->
+                <header class="mb-8 sm:mb-12 relative z-10 text-center sm:text-left max-w-3xl mx-auto sm:mx-0">
+                    
+                    <div id="item-tags" class="flex flex-wrap justify-center sm:justify-start gap-2 mb-5 sm:mb-6">
+                        <!-- Tags injected via JS -->
+                    </div>
+                    
+                    <h1 id="item-title" class="text-3xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-primary tracking-tight mb-5 sm:mb-6 leading-[1.2] sm:leading-[1.15]"></h1>
+                    
+                    <p id="item-description" class="text-[1rem] sm:text-[1.25rem] text-secondary font-medium leading-relaxed mb-6 sm:mb-8 hidden"></p>
+                    
+                    <!-- Meta Row -->
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 sm:gap-x-8 gap-y-3 text-[0.7rem] sm:text-[0.75rem] font-bold text-secondary uppercase tracking-widest w-full border-t border-black/10 dark:border-white/10 pt-5 sm:pt-6">
+                        <span id="item-date" class="flex items-center gap-2 sm:gap-2.5"><i class="far fa-calendar text-sky-500 text-[0.85rem] sm:text-[0.9rem]"></i> ...</span>
+                        <span id="item-read-time" class="flex items-center gap-2 sm:gap-2.5"><i class="far fa-clock text-indigo-500 text-[0.85rem] sm:text-[0.9rem]"></i> ...</span>
+                        
+                        <a id="live-overview-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden w-full sm:w-auto sm:ml-auto interactive-btn glass-element px-5 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-[0.8rem] font-bold text-sky-600 dark:text-sky-400 border border-sky-500/20 hover:bg-sky-500/10 justify-center sm:justify-start items-center gap-2 transition-colors shadow-sm mt-2 sm:mt-0">
+                            <i class="fas fa-external-link-alt"></i> View Live Project
+                        </a>
+                    </div>
+                </header>
+
+                <!-- 2. Hero Banner Image (16:9 strict aspect ratio) -->
+                <figure class="w-full aspect-video rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative shadow-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 group mb-8 sm:mb-16 z-10">
+                    <img id="item-banner" src="" alt="Project Banner" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50 mix-blend-overlay"></div>
+                </figure>
+
+                <!-- 3. Rich Text Document Body -->
+                <section class="max-w-3xl mx-auto relative z-10">
+                    <div id="item-content" class="rich-text-content">
+                        <!-- Quill HTML / Rich Text injected here -->
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- 4. Re-imagined Footer (Sleek CTA Block) -->
+            <footer class="glass-panel rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 flex flex-col items-center text-center shadow-xl mt-8 sm:mt-12 mb-8 relative overflow-hidden group">
+                <!-- Soft Glow Background inside Footer -->
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-sky-500/5 dark:to-sky-500/10 pointer-events-none"></div>
+                
+                <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full overflow-hidden glass-element shadow-lg border border-white/20 mb-5 group-hover:scale-105 transition-transform duration-500">
+                    <img src="ardan-ridho.png" alt="Ardan Ridho" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/200x200/E2E8F0/4A5568?text=AR'; this.onerror=null;">
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight mb-3">Let's build something great.</h2>
+                <p class="text-[0.9rem] sm:text-[1rem] font-medium text-secondary mb-8 max-w-lg">I'm currently available for freelance work and open to new opportunities. If you have a project in mind, I'd love to hear about it.</p>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto relative z-10">
+                    <a href="contact.html" class="interactive-btn w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-3.5 rounded-xl sm:rounded-full text-[0.95rem] font-bold shadow-lg">
+                        <i class="fas fa-paper-plane text-[0.8rem]"></i> Let's Work Together
+                    </a>
+                    
+                    <!-- Integrated Social Links -->
+                    <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                        <a href="https://www.instagram.com/ardnrd" target="_blank" class="social-glass-icon !w-11 !h-11 sm:!w-12 sm:!h-12 text-[1.1rem] sm:text-[1.2rem]" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/ardnrd" target="_blank" class="social-glass-icon !w-11 !h-11 sm:!w-12 sm:!h-12 text-[1.1rem] sm:text-[1.2rem]" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.youtube.com/@ardnrd" target="_blank" class="social-glass-icon !w-11 !h-11 sm:!w-12 sm:!h-12 text-[1.1rem] sm:text-[1.2rem]" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </footer>
+        </article>
+    </main>
+    
+    <!-- Error State Modal -->
+    <div id="error-message" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 text-center max-w-md w-full shadow-2xl border border-white/20 transform scale-95 opacity-0 transition-all duration-500" id="error-modal-card">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-[1.25rem] sm:rounded-[1.5rem] bg-rose-500/10 text-rose-500 flex items-center justify-center text-3xl sm:text-4xl mx-auto mb-5 sm:mb-6 border border-rose-500/20 shadow-inner">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-primary mb-2 sm:mb-3 tracking-tight">Project Not Found</h2>
+            <p class="text-[0.9rem] sm:text-[0.95rem] text-secondary mb-6 sm:mb-8 leading-relaxed">The content you are looking for might have been removed, renamed, or is temporarily unavailable.</p>
+            <a href="index.html" class="interactive-btn inline-flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full font-bold text-[0.85rem] sm:text-[0.9rem] shadow-lg w-full sm:w-auto">
+                <i class="fas fa-arrow-left"></i> Return Home
+            </a>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+        // --- Smooth Scroll Logic ---
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+            smoothWheel: true,
+            touchMultiplier: 2,
+        });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // --- Custom Cursor Logic ---
+        const cursor = document.getElementById('custom-cursor');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2;
+
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.4; cursorY += (mouseY - cursorY) * 0.4;
+            cursor.style.transform = `translate3d(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%), 0)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        function attachCursorEvents() {
+            const interactives = document.querySelectorAll('a, button, .interactive-btn, .social-glass-icon, img');
+            interactives.forEach(el => {
+                el.removeEventListener('mouseenter', addHoverState); el.removeEventListener('mouseleave', removeHoverState);
+                el.addEventListener('mouseenter', addHoverState); el.addEventListener('mouseleave', removeHoverState);
+            });
+        }
+        function addHoverState() { cursor.classList.add('cursor-hover'); }
+        function removeHoverState() { cursor.classList.remove('cursor-hover'); }
+        attachCursorEvents();
+        const observerForCursor = new MutationObserver(() => attachCursorEvents());
+        observerForCursor.observe(document.body, { childList: true, subtree: true });
+
+        // --- Estimate Reading Time helper ---
+        function estimateReadTime(text) {
+            const wordsPerMinute = 200;
+            const words = text.replace(/<[^>]*>?/gm, '').split(/\s+/).length;
+            const minutes = Math.max(1, Math.ceil(words / wordsPerMinute));
+            return `${minutes} min read`;
+        }
+
+        async function initializeAndLoadContent() {
+            const skeletonLoader = document.getElementById('skeleton-loader');
+            const contentCard = document.getElementById('content-card');
+            const errorMessage = document.getElementById('error-message');
+            const navTitle = document.getElementById('nav-doc-title');
+            
+            try {
+                let firebaseConfig = null;
+                // Attempt to fetch from Netlify, fallback gracefully
+                try {
+                    const response = await fetch('/.netlify/functions/firebase-config');
+                    if (response.ok) {
+                        firebaseConfig = await response.json();
+                    }
+                } catch (err) {
+                    console.log("Netlify env fetch skipped or failed.");
+                }
+
+                // Default config fallback for UI testing if backend is completely unlinked
+                if (!firebaseConfig || !firebaseConfig.projectId) {
+                    firebaseConfig = {
+                        apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID",
+                        storageBucket: "YOUR_STORAGE_BUCKET", messagingSenderId: "YOUR_MESSAGING_SENDER_ID", appId: "YOUR_APP_ID"
+                    };
+                }
+
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                const params = new URLSearchParams(window.location.search);
+                const type = params.get('type') || 'projects'; 
+                const id = params.get('id');
+                
+                if (!id) throw new Error("Missing URL parameter for document ID.");
+
+                const docRef = doc(db, type, id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const item = docSnap.data();
+                    
+                    // Top Bar Title
+                    navTitle.textContent = item.title;
+                    document.title = `${item.title} - Ardan Ridho`;
+                    
+                    document.getElementById('item-title').textContent = item.title;
+                    
+                    // Banner Setup
+                    const banner = document.getElementById('item-banner');
+                    if (item.imageUrl) {
+                        banner.src = item.imageUrl;
+                    } else {
+                        banner.src = 'https://placehold.co/1200x675/1e293b/f8fafc?text=Project+Preview'; /* 16:9 placeholder */
+                    }
+
+                    // Description Setup (if available)
+                    const descEl = document.getElementById('item-description');
+                    if (item.description && item.description.trim() !== "") {
+                        descEl.textContent = item.description;
+                        descEl.classList.remove('hidden');
+                    }
+
+                    // Date Formatting
+                    if (item.createdAt) {
+                        const date = new Date(item.createdAt.toDate());
+                        document.getElementById('item-date').innerHTML = `<i class="far fa-calendar text-sky-500 text-[0.85rem] sm:text-[0.9rem] mr-1.5"></i> ${date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}`;
+                    } else {
+                        document.getElementById('item-date').innerHTML = `<i class="far fa-calendar text-sky-500 text-[0.85rem] sm:text-[0.9rem] mr-1.5"></i> Just Now`;
+                    }
+
+                    // Tags parsing
+                    const tagsContainer = document.getElementById('item-tags');
+                    if (item.tag) {
+                        const tagsArray = item.tag.split(',').map(t => t.trim()).filter(t => t.length > 0);
+                        tagsContainer.innerHTML = tagsArray.map(tag => 
+                            `<span class="inline-flex items-center text-[0.6rem] sm:text-[0.65rem] font-extrabold uppercase tracking-widest text-primary bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/20 px-3 py-1.5 rounded-full shadow-sm backdrop-blur-md transition-colors hover:bg-black/10 dark:hover:bg-white/20">${tag}</span>`
+                        ).join('');
+                        
+                        // Add Featured Star if true
+                        if(item.isFeatured) {
+                            tagsContainer.innerHTML += `<span class="inline-flex items-center text-[0.6rem] sm:text-[0.65rem] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full shadow-sm"><i class="fas fa-star mr-1.5"></i> Featured</span>`;
+                        }
+                    }
+
+                    // Live Project Link
+                    const liveOverviewBtn = document.getElementById('live-overview-btn');
+                    if (item.externalUrl && item.externalUrl.trim() !== '') {
+                        liveOverviewBtn.href = item.externalUrl;
+                        liveOverviewBtn.classList.remove('hidden');
+                        liveOverviewBtn.classList.add('inline-flex');
+                    }
+                    
+                    // Content and Read Time
+                    const contentContainer = document.getElementById('item-content');
+                    const contentHtml = item.content || '<p class="opacity-50 italic text-center py-10">Detailed documentation is currently being written. Please check back later.</p>';
+                    contentContainer.innerHTML = contentHtml;
+                    
+                    document.getElementById('item-read-time').innerHTML = `<i class="far fa-clock text-indigo-500 text-[0.85rem] sm:text-[0.9rem] mr-1.5"></i> ${estimateReadTime(contentHtml)}`;
+                    
+                    // Re-attach cursor events for dynamic content
+                    attachCursorEvents();
+
+                    // Fluid Transition: Fade out skeleton, fade in content
+                    skeletonLoader.classList.add('opacity-0', '-translate-y-4');
+                    setTimeout(() => {
+                        skeletonLoader.classList.add('hidden');
+                        contentCard.classList.remove('opacity-0', 'translate-y-8');
+                    }, 500);
+
+                } else {
+                    throw new Error("The requested document could not be found.");
+                }
+            } catch (error) {
+                console.error("Error loading page content:", error);
+                navTitle.textContent = "Error";
+                skeletonLoader.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    skeletonLoader.classList.add('hidden');
+                    errorMessage.classList.remove('hidden');
+                    // Add slight delay for popup animation
+                    setTimeout(() => {
+                        document.getElementById('error-modal-card').classList.remove('scale-95', 'opacity-0');
+                        document.getElementById('error-modal-card').classList.add('scale-100', 'opacity-100');
+                    }, 50);
+                }, 500);
+            }
+        }
+        
+        // --- Theme Toggle Logic ---
+        const themeToggle = document.getElementById('theme-toggle'); 
+        const themeToggleIcon = themeToggle.querySelector('.theme-toggle-icon');
+        const htmlElement = document.documentElement;
+        
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                htmlElement.classList.remove('light');
+                themeToggleIcon.innerHTML = '<i class="fas fa-sun text-yellow-500"></i>';
+            } else {
+                htmlElement.classList.add('light');
+                htmlElement.classList.remove('dark');
+                themeToggleIcon.innerHTML = '<i class="fas fa-moon text-indigo-500"></i>';
+            }
+        }
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark'; // Match index default
+        applyTheme(savedTheme); 
+        
+        themeToggle.addEventListener('click', () => { 
+            const newTheme = htmlElement.classList.contains('light') ? 'dark' : 'light'; 
+            applyTheme(newTheme); 
+            localStorage.setItem('theme', newTheme); 
+        });
+
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', initializeAndLoadContent);
+    </script>
+</body>
+</html>

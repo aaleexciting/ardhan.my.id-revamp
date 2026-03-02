@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Me - Ardan Ridho</title>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Core Physics & Framer-like Easing */
+        :root {
+            --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.8s var(--spring-smooth), color 0.8s var(--spring-smooth);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* * LIQUID GLASS DESIGN SYSTEM */
+        .light { 
+            --bg-base: #f1f5f9;
+            --text-primary: #0f172a; 
+            --text-secondary: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-hover: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-border-highlight: rgba(0, 0, 0, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.08);
+            --element-bg: rgba(255, 255, 255, 0.6);
+            --element-border: rgba(0, 0, 0, 0.06);
+            --orb-1: #bae6fd; --orb-2: #e0e7ff; --orb-3: #fce7f3;
+        }
+        
+        .dark { 
+            --bg-base: #020617; 
+            --text-primary: #f8fafc; 
+            --text-secondary: #94a3b8; 
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-bg-hover: rgba(30, 41, 59, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
+            --element-bg: rgba(30, 41, 59, 0.4);
+            --element-border: rgba(255, 255, 255, 0.05);
+            --orb-1: #0369a1; --orb-2: #3730a3; --orb-3: #0f172a;
+        }
+
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            overflow: hidden; pointer-events: none;
+            background-color: var(--bg-base);
+            transition: background-color 0.8s var(--spring-smooth);
+        }
+        
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; animation: float 24s infinite ease-in-out alternate;
+            transition: background-color 1s ease; mix-blend-mode: normal;
+        }
+        .dark .orb { opacity: 0.4; filter: blur(100px); }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--orb-1); }
+        .orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--orb-2); animation-delay: -8s; }
+        .orb-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: var(--orb-3); animation-delay: -16s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.05); }
+        }
+
+        .glass-panel { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); 
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .glass-element {
+            background: var(--element-bg); border: 1px solid var(--element-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+
+        .glass-pill {
+            display: inline-flex; align-items: center; background: var(--element-bg);
+            color: var(--text-primary); font-size: 0.75rem; font-weight: 700;
+            padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid var(--glass-border);
+            letter-spacing: 0.05em; text-transform: uppercase; backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+
+        .interactive-btn { transition: transform 0.4s var(--spring-bounce), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+        .interactive-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--glass-shadow-hover); }
+        .interactive-btn:active { transform: scale(0.96); }
+
+        .social-glass-icon {
+            display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
+            background: var(--element-bg); border: 1px solid var(--element-border); color: var(--text-secondary); font-size: 1rem;
+            transition: all 0.4s var(--spring-bounce); backdrop-filter: blur(8px);
+        }
+        .social-glass-icon:hover {
+            background: var(--glass-bg-hover); transform: translateY(-5px) scale(1.1); color: var(--text-primary);
+            border-color: var(--glass-border-highlight); box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Form Input Styling */
+        .glass-input {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--element-border);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-input {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .glass-input:focus {
+            outline: none;
+            background: var(--element-bg);
+            border-color: rgba(14, 165, 233, 0.5);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Custom Cursor */
+        @media (pointer: fine) {
+            body, a, button, .interactive-btn, .social-glass-icon { cursor: none !important; }
+            /* Keep standard text cursor for inputs to ensure usability */
+            input, textarea { cursor: text !important; }
+        }
+        
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 99999;
+            will-change: transform, width, height;
+            transition: width 0.25s var(--spring-bounce), height 0.25s var(--spring-bounce), background-color 0.3s ease, border 0.3s ease;
+            background-color: #f8fafc; border: 1.5px solid transparent; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .light #custom-cursor { background-color: #0f172a; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        #custom-cursor.cursor-hover { width: 36px; height: 36px; background-color: transparent; border-color: #f8fafc; }
+        .light #custom-cursor.cursor-hover { border-color: #0f172a; }
+
+        /* Animation for appearance */
+        .reveal-up {
+            animation: slideUpFade 0.8s var(--spring-smooth) forwards;
+            opacity: 0; transform: translateY(30px) scale(0.98);
+        }
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .error-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30 selection:text-sky-500">
+
+    <div id="custom-cursor"></div>
+
+    <div class="mesh-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <nav class="w-full px-4 sm:px-6 py-6 flex justify-between items-center z-50 max-w-5xl mx-auto relative reveal-up">
+        <a href="index.html" class="glass-element px-5 py-2.5 rounded-full flex items-center gap-2 text-[0.85rem] font-bold text-secondary hover:text-primary interactive-btn shadow-sm transition-colors">
+            <i class="fas fa-arrow-left"></i> Back to Portfolio
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div id="local-time" class="hidden sm:flex glass-element px-5 rounded-full items-center justify-center text-[0.7rem] font-bold text-secondary uppercase tracking-widest shadow-sm h-11 transition-colors">
+                <i class="far fa-clock mr-2 opacity-60 text-[0.75rem]"></i> --:--
+            </div>
+            <button id="theme-toggle" class="w-11 h-11 rounded-full glass-element flex items-center justify-center text-secondary hover:text-primary transition-all interactive-btn shadow-sm">
+                <span class="theme-toggle-icon block text-base"><i class="fas fa-sun"></i></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="w-full max-w-5xl mx-auto flex-grow flex items-center justify-center p-4 sm:p-6 relative z-10">
+        
+        <div class="glass-panel rounded-[2.5rem] p-6 sm:p-10 lg:p-12 w-full flex flex-col lg:flex-row gap-10 lg:gap-16 relative overflow-hidden group reveal-up" style="animation-delay: 0.1s;">
+            <i class="fas fa-paper-plane absolute -bottom-10 -right-10 text-[12rem] text-primary opacity-[0.03] group-hover:opacity-[0.05] transition-all duration-1000 rotate-12 group-hover:rotate-0 pointer-events-none"></i>
+
+            <div class="lg:w-5/12 flex flex-col justify-center relative z-10">
+                <div class="glass-pill mb-6 w-fit border border-sky-500/30 text-sky-600 dark:text-sky-400">
+                    <span class="relative flex h-2 w-2 mr-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                    </span>
+                    Let's Connect
+                </div>
+                
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-primary mb-4 leading-tight">
+                    Let's build something <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500 drop-shadow-sm">epic together.</span>
+                </h1>
+                
+                <p class="text-[0.95rem] sm:text-[1.05rem] text-secondary leading-relaxed font-medium mb-8">
+                    Have a project in mind, a question about my work, or just want to say hi? Drop a message and I'll get back to you directly via WhatsApp.
+                </p>
+
+                <div class="flex flex-col gap-5 mb-10">
+                    <div class="flex items-center gap-4 text-secondary group/info">
+                        <div class="w-12 h-12 rounded-2xl glass-element flex items-center justify-center shrink-0 group-hover/info:bg-sky-500/10 transition-colors">
+                            <i class="fas fa-map-marker-alt text-[1.1rem] text-primary opacity-70 group-hover/info:text-sky-500 transition-colors"></i>
+                        </div>
+                        <div>
+                            <p class="text-[0.65rem] uppercase tracking-widest font-extrabold opacity-60 mb-0.5">Location</p>
+                            <p class="font-bold text-primary text-[0.95rem]">Serang, Indonesia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <p class="text-[0.65rem] uppercase tracking-widest font-bold text-secondary opacity-70 mb-4 flex items-center gap-3">
+                        Or connect socially
+                        <span class="flex-grow h-px bg-black/10 dark:bg-white/10"></span>
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <a href="https://www.facebook.com/ardhnrd/" target="_blank" class="social-glass-icon" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/ardnrd/" target="_blank" class="social-glass-icon" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>                
+                        <a href="https://www.linkedin.com/in/ardnrd/" target="_blank" class="social-glass-icon" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@ardnrd" target="_blank" class="social-glass-icon" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-7/12 relative z-10 flex flex-col justify-center">
+                <div class="glass-element p-6 sm:p-8 md:p-10 rounded-[2rem] shadow-xl relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-indigo-500/5 pointer-events-none"></div>
+
+                    <form id="contactForm" class="relative z-10 flex flex-col gap-5 sm:gap-6">
+                        
+                        <div class="flex flex-col gap-2">
+                            <label for="senderName" class="text-[0.75rem] font-extrabold text-secondary uppercase tracking-wider ml-1">Your Name</label>
+                            <div class="relative group/input">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within/input:text-sky-500">
+                                    <i class="fas fa-user text-secondary opacity-60"></i>
+                                </div>
+                                <input type="text" id="senderName" class="glass-input w-full rounded-xl py-3.5 pl-11 pr-4 font-medium placeholder:text-secondary/40" placeholder="John Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label for="messageContent" class="flex justify-between items-center text-[0.75rem] font-extrabold text-secondary uppercase tracking-wider ml-1">
+                                <span>Your Message</span>
+                                <span id="charCounter" class="text-[0.65rem] opacity-60">0 / 500</span>
+                            </label>
+                            <div class="relative group/input">
+                                <div class="absolute top-4 left-0 pl-4 pointer-events-none transition-colors group-focus-within/input:text-sky-500">
+                                    <i class="fas fa-comment-alt text-secondary opacity-60"></i>
+                                </div>
+                                <textarea id="messageContent" class="glass-input w-full rounded-xl py-3.5 pl-11 pr-4 font-medium placeholder:text-secondary/40 min-h-[160px] resize-y" placeholder="Tell me about your project, ideas, or just say hello..." required maxlength="500"></textarea>
+                            </div>
+                        </div>
+                        
+                        <button id="submitButton" type="submit" class="mt-2 interactive-btn w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 px-6 rounded-xl font-bold text-[0.95rem] shadow-lg flex items-center justify-center gap-3 overflow-hidden relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-sky-500 to-indigo-500 opacity-0 hover:opacity-100 transition-opacity duration-300 z-0"></div>
+                            
+                            <span id="submitButtonText" class="relative z-10 transition-colors group-hover:text-white">Send via WhatsApp</span>
+                            <i id="submitButtonIcon" class="fab fa-whatsapp text-[1.2rem] relative z-10 transition-colors group-hover:text-white"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script>
+        // --- Custom Cursor Logic ---
+        const cursor = document.getElementById('custom-cursor');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2;
+
+        window.addEventListener('mousemove', (e) => { 
+            mouseX = e.clientX; mouseY = e.clientY; 
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.4; 
+            cursorY += (mouseY - cursorY) * 0.4;
+            cursor.style.transform = `translate3d(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%), 0)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        function attachCursorEvents() {
+            const interactives = document.querySelectorAll('a, button, .interactive-btn, .social-glass-icon');
+            interactives.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover')); 
+                el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+            });
+            
+            // Hide custom cursor entirely when hovering over text inputs to avoid clashing with standard text caret
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.style.opacity = '0');
+                el.addEventListener('mouseleave', () => cursor.style.opacity = '1');
+            });
+        }
+        attachCursorEvents();
+
+        // --- Clock Logic ---
+        function updateTime() {
+            const timeElement = document.getElementById('local-time');
+            if(!timeElement) return;
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                timeZone: 'Asia/Jakarta', 
+                hour: 'numeric', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+            timeElement.innerHTML = `<i class="far fa-clock mr-2 opacity-60 text-[0.75rem]"></i> ${timeString} WIB`;
+        }
+        setInterval(updateTime, 1000); 
+        updateTime();
+
+        // --- Theme Toggle Logic ---
+        const themeToggle = document.getElementById('theme-toggle'); 
+        const themeToggleIcon = themeToggle.querySelector('.theme-toggle-icon'); 
+        const htmlElement = document.documentElement; 
+        
+        function applyTheme(theme) { 
+            if (theme === 'dark') { 
+                htmlElement.classList.add('dark'); htmlElement.classList.remove('light'); 
+                themeToggleIcon.innerHTML = '<i class="fas fa-sun text-yellow-500"></i>'; 
+            } else { 
+                htmlElement.classList.add('light'); htmlElement.classList.remove('dark'); 
+                themeToggleIcon.innerHTML = '<i class="fas fa-moon text-indigo-500"></i>'; 
+            } 
+        } 
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark'; 
+        applyTheme(savedTheme); 
+        
+        themeToggle.addEventListener('click', () => { 
+            const newTheme = htmlElement.classList.contains('light') ? 'dark' : 'light'; 
+            applyTheme(newTheme); localStorage.setItem('theme', newTheme); 
+        });
+
+        // --- Form Submission Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contactForm');
+            const messageContent = document.getElementById('messageContent');
+            const charCounter = document.getElementById('charCounter');
+            
+            // Character counter updates
+            messageContent.addEventListener('input', () => {
+                const count = messageContent.value.length;
+                charCounter.textContent = `${count} / 500`;
+                if(count >= 500) {
+                    charCounter.classList.add('text-red-500');
+                } else {
+                    charCounter.classList.remove('text-red-500');
+                }
+            });
+
+            contactForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const senderNameInput = document.getElementById('senderName');
+                const messageContentInput = document.getElementById('messageContent');
+                const senderName = senderNameInput.value.trim();
+                const messageContentText = messageContentInput.value.trim();
+
+                let isValid = true;
+                [senderNameInput, messageContentInput].forEach(input => {
+                    input.classList.remove('error-shake', 'border-red-500');
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('error-shake', 'border-red-500');
+                    }
+                });
+
+                if (!isValid) {
+                     setTimeout(() => {
+                        [senderNameInput, messageContentInput].forEach(input => input.classList.remove('error-shake'));
+                     }, 500);
+                    return;
+                }
+
+                const submitButton = document.getElementById('submitButton');
+                const submitButtonText = document.getElementById('submitButtonText');
+                const submitButtonIcon = document.getElementById('submitButtonIcon');
+                
+                // Visual Loading State
+                submitButton.disabled = true;
+                submitButtonText.textContent = 'Preparing Chat...';
+                submitButtonIcon.className = 'fas fa-spinner fa-spin text-white';
+                
+                // Keep background gradient forced during loading state
+                const gradientOverlay = submitButton.querySelector('div');
+                gradientOverlay.classList.remove('opacity-0', 'hover:opacity-100');
+                gradientOverlay.classList.add('opacity-100');
+                submitButtonText.classList.add('text-white');
+
+                setTimeout(() => {
+                    // Using your existing WhatsApp Logic
+                    const yourWhatsAppNumber = '6285693569165'; 
+                    const messageText = `Hi Ardan, my name is ${senderName}.\n\nMy message is:\n${messageContentText}`;
+                    const encodedMessage = encodeURIComponent(messageText);
+                    const whatsappURL = `https://wa.me/${yourWhatsAppNumber}?text=${encodedMessage}`;
+                    
+                    window.open(whatsappURL, '_blank');
+
+                    // Reset form after a brief delay
+                    setTimeout(() => {
+                         submitButton.disabled = false;
+                         submitButtonText.textContent = 'Send via WhatsApp';
+                         submitButtonIcon.className = 'fab fa-whatsapp relative z-10 transition-colors group-hover:text-white';
+                         
+                         // Reset button styling
+                         gradientOverlay.classList.remove('opacity-100');
+                         gradientOverlay.classList.add('opacity-0', 'hover:opacity-100');
+                         submitButtonText.classList.remove('text-white');
+                         
+                         contactForm.reset();
+                         charCounter.textContent = '0 / 500';
+                         charCounter.classList.remove('text-red-500');
+                    }, 1000);
+
+                }, 800); // Slight delay to let the animation play out nicely
+            });
+        });
+    </script>
+</body>
+</html>

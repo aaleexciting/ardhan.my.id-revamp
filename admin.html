@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Ardan Ridho</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Modern typography matching index.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+    <!-- Add Chart.js for Professional Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* Core Physics & Framer-like Easing */
+        :root {
+            --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.8s var(--spring-smooth), color 0.8s var(--spring-smooth);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* LIQUID GLASS DESIGN SYSTEM */
+        .light { 
+            --bg-base: #f1f5f9;
+            --text-primary: #0f172a; 
+            --text-secondary: #475569;
+            
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-hover: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-border-highlight: rgba(0, 0, 0, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.08);
+            
+            --element-bg: rgba(255, 255, 255, 0.6);
+            --element-border: rgba(0, 0, 0, 0.06);
+            --input-bg: rgba(255, 255, 255, 0.8);
+            
+            --orb-1: #bae6fd; --orb-2: #e0e7ff; --orb-3: #fce7f3;
+        }
+        
+        .dark { 
+            --bg-base: #020617; 
+            --text-primary: #f8fafc; 
+            --text-secondary: #94a3b8; 
+            
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-bg-hover: rgba(30, 41, 59, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            --glass-shadow-hover: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
+            
+            --element-bg: rgba(30, 41, 59, 0.4);
+            --element-border: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            
+            --orb-1: #0369a1; --orb-2: #3730a3; --orb-3: #0f172a;
+        }
+
+        /* Ambient Liquid Mesh Background */
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            overflow: hidden; pointer-events: none;
+            background-color: var(--bg-base);
+            transition: background-color 0.8s var(--spring-smooth);
+        }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            opacity: 0.6; animation: float 24s infinite ease-in-out alternate;
+            transition: background-color 1s ease; mix-blend-mode: normal;
+        }
+        .dark .orb { opacity: 0.4; filter: blur(100px); }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--orb-1); }
+        .orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--orb-2); animation-delay: -8s; }
+        .orb-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: var(--orb-3); animation-delay: -16s; }
+
+        @keyframes float { 
+            0% { transform: translate(0, 0) scale(1); } 
+            33% { transform: translate(10%, -10%) scale(1.1); }
+            66% { transform: translate(-5%, 15%) scale(0.9); }
+            100% { transform: translate(5%, 5%) scale(1.05); } 
+        }
+
+        /* Glass Utility Classes */
+        .glass-panel { 
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+            transition: all 0.5s var(--spring-smooth);
+        }
+        .glass-element {
+            background: var(--element-bg); border: 1px solid var(--element-border);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s var(--spring-smooth);
+        }
+        
+        /* Interactive Elements */
+        .interactive-btn {
+            transition: transform 0.4s var(--spring-bounce), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .interactive-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--glass-shadow-hover); }
+        .interactive-btn:active { transform: scale(0.96); }
+
+        .input-style {
+            background-color: var(--input-bg); border: 1px solid var(--element-border);
+            color: var(--text-primary); border-radius: 0.75rem; padding: 0.85rem 1rem;
+            width: 100%; transition: all 0.3s var(--spring-smooth);
+            backdrop-filter: blur(10px);
+        }
+        .input-style:focus {
+            outline: none; border-color: rgba(14, 165, 233, 0.6);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+            background-color: var(--glass-bg-hover);
+        }
+
+        /* Quill Editor Glass Adjustments */
+        .ql-toolbar, .ql-container { border-color: var(--element-border) !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+        .ql-toolbar { border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; background: var(--element-bg); backdrop-filter: blur(10px); }
+        .ql-container { border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; background: var(--input-bg); backdrop-filter: blur(10px); font-size: 1rem !important;}
+        .dark .ql-editor { color: var(--text-primary); }
+        .dark .ql-snow .ql-stroke { stroke: var(--text-secondary); }
+        .dark .ql-snow .ql-picker-label, .dark .ql-snow .ql-picker { color: var(--text-secondary); }
+        
+        /* Sidebar active link */
+        .sidebar-link.active {
+            background-color: rgba(14, 165, 233, 0.15);
+            color: rgb(14, 165, 233);
+            border-color: rgba(14, 165, 233, 0.3);
+            font-weight: 700;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 10px; opacity: 0.5; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-primary); }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30 selection:text-sky-500">
+
+    <!-- Ambient Liquid Mesh Background -->
+    <div class="mesh-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Login Section -->
+    <div id="login-section" class="flex items-center justify-center min-h-screen p-4 relative z-10">
+        <div class="w-full max-w-md p-8 sm:p-10 space-y-6 glass-panel rounded-[2.5rem]">
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto bg-black/5 dark:bg-white/10 rounded-[1.2rem] flex items-center justify-center border border-black/10 dark:border-white/10 mb-6">
+                    <i class="fas fa-fingerprint text-3xl text-sky-500"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold text-primary mb-2">Admin Panel</h1>
+                <p class="text-secondary font-medium">Please sign in to manage your portfolio.</p>
+            </div>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label for="email" class="block text-sm font-bold text-secondary mb-2 uppercase tracking-wide">Email Address</label>
+                    <input type="email" id="email" required class="input-style">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-bold text-secondary mb-2 uppercase tracking-wide">Password</label>
+                    <input type="password" id="password" required class="input-style">
+                </div>
+                <button type="submit" class="w-full mt-4 px-4 py-3.5 font-bold text-center rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 interactive-btn text-[0.95rem]">Sign In</button>
+                <p id="login-error" class="text-sm font-bold text-center text-rose-500 h-4"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Structure -->
+    <div id="admin-panel" class="hidden relative z-10 min-h-screen flex">
+        
+        <!-- Glass Sidebar -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-72 transform -translate-x-full lg:translate-x-0 transition-transform duration-500 ease-in-out z-40 lg:p-6 lg:pr-0">
+            <div class="h-full glass-panel lg:rounded-[2rem] rounded-none flex flex-col overflow-hidden">
+                <div class="flex items-center justify-start px-8 h-24 border-b border-black/5 dark:border-white/5 flex-shrink-0">
+                    <h1 class="text-[1.3rem] font-extrabold tracking-tight text-primary flex items-center gap-3">
+                        <i class="fas fa-layer-group text-sky-500"></i> Workspace
+                    </h1>
+                </div>
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                    <a href="#" id="projects-link" class="sidebar-link glass-element flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-semibold text-[0.95rem] text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 border-transparent"><i class="fas fa-code w-7"></i><span>Projects</span></a>
+                    <a href="#" id="experience-link" class="sidebar-link glass-element flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-semibold text-[0.95rem] text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 border-transparent"><i class="fas fa-briefcase w-7"></i><span>Experience</span></a>
+                    <a href="#" id="shortlinks-link" class="sidebar-link glass-element flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-semibold text-[0.95rem] text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 border-transparent"><i class="fas fa-link w-7"></i><span>Shortlinks</span></a>
+                    <a href="#" id="visits-link" class="sidebar-link glass-element flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-semibold text-[0.95rem] text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 border-transparent"><i class="fas fa-chart-line w-7"></i><span>Analytics</span></a>
+                </nav>
+                <div class="p-4 border-t border-black/5 dark:border-white/5 space-y-2 flex-shrink-0 bg-black/5 dark:bg-white/5">
+                    <button id="theme-toggle" class="w-full flex items-center justify-start py-3 px-4 text-secondary hover:text-primary font-bold rounded-xl transition-colors text-[0.9rem]"><i class="fas fa-moon w-7"></i><span>Theme</span></button>
+                    <a href="#" id="logout-button" class="w-full flex items-center justify-start py-3 px-4 text-rose-500/80 hover:text-rose-500 hover:bg-rose-500/10 font-bold rounded-xl transition-colors text-[0.9rem]"><i class="fas fa-sign-out-alt w-7"></i><span>Sign Out</span></a>
+                </div>
+            </div>
+        </div>
+        
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-30 lg:hidden transition-opacity"></div>
+
+        <!-- Main Content Area -->
+        <div class="w-full lg:pl-72 flex flex-col min-h-screen">
+            <!-- Mobile Header -->
+            <header class="lg:hidden glass-panel rounded-none border-t-0 border-x-0 sticky top-0 z-20">
+                <div class="flex items-center justify-between p-5">
+                    <button id="sidebar-toggle" class="text-primary text-xl w-10 h-10 rounded-full glass-element flex items-center justify-center">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="mobile-header-title" class="text-[1.1rem] font-extrabold text-primary">Dashboard</h1>
+                    <div class="w-10"></div>
+                </div>
+            </header>
+
+            <main class="flex-grow p-5 sm:p-8 lg:p-10">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-5 mb-10">
+                    <div>
+                        <div class="inline-flex items-center text-[0.65rem] font-extrabold uppercase tracking-widest text-sky-500 bg-sky-500/10 border border-sky-500/20 px-3 py-1.5 rounded-full mb-3 shadow-sm backdrop-blur-sm">Database Editor</div>
+                        <h1 id="main-content-title" class="text-4xl font-extrabold text-primary hidden lg:block tracking-tight">Projects</h1>
+                    </div>
+                    <button id="add-new-btn" class="w-full sm:w-auto px-6 py-3 font-bold rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 interactive-btn flex items-center justify-center space-x-2 shadow-lg text-[0.9rem]">
+                        <i class="fas fa-plus text-[0.8rem]"></i><span>Add New Item</span>
+                    </button>
+                </div>
+                
+                <div id="content-area" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Dynamic Items -->
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div id="form-modal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-md z-50 hidden items-center justify-center p-4 sm:p-6 transition-opacity duration-300 opacity-0">
+        <div class="glass-panel rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col modal-content transform scale-95 transition-all duration-500 var(--spring-bounce)">
+            
+            <div class="flex justify-between items-center p-6 sm:px-8 border-b border-black/10 dark:border-white/10 flex-shrink-0 bg-black/5 dark:bg-white/5">
+                <h2 id="modal-title" class="text-[1.3rem] font-extrabold text-primary tracking-tight"></h2>
+                <button id="close-modal-btn" class="w-10 h-10 rounded-full glass-element flex items-center justify-center text-secondary hover:text-primary hover:bg-black/10 dark:hover:bg-white/10 transition-all"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="overflow-y-auto hide-scrollbar">
+                
+                <!-- Shared Hidden Fields -->
+                <input type="hidden" id="global-item-id">
+                
+                <!-- Main Project Form -->
+                <form id="project-form" class="p-6 sm:p-8 space-y-6 hidden">
+                    <div>
+                        <label for="proj-title" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Title</label>
+                        <input type="text" id="proj-title" class="input-style" placeholder="Project Name">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="proj-tag" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Tag (Category)</label>
+                            <input type="text" id="proj-tag" class="input-style" placeholder="e.g. Web App, UI/UX Design">
+                        </div>
+                        <div>
+                            <label for="proj-external-url" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Live URL (Optional)</label>
+                            <input type="url" id="proj-external-url" class="input-style" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center p-4 sm:p-5 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+                        <label class="flex items-center gap-4 cursor-pointer w-full">
+                            <div class="relative flex-shrink-0">
+                                <input type="checkbox" id="proj-featured" class="sr-only peer">
+                                <div class="w-11 h-6 bg-black/10 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[0.8rem] font-bold text-primary uppercase tracking-wider">Highlight as Featured Work</span>
+                                <span class="text-[0.7rem] text-secondary mt-0.5">Featured projects appear larger on the main page with a star badge.</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label for="proj-description" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Short Description</label>
+                        <textarea id="proj-description" rows="2" class="input-style resize-none" placeholder="A brief, engaging summary..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="proj-image" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Thumbnail Image URL</label>
+                        <input type="url" id="proj-image" class="input-style" placeholder="https://example.com/image.jpg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Full Content / Case Study (Rich Text)</label>
+                        <div class="rounded-xl overflow-hidden shadow-sm">
+                            <div id="project-quill-editor" style="min-height: 250px;"></div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Experience Form -->
+                <form id="experience-form" class="p-6 sm:p-8 space-y-6 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="exp-company" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Company Name</label>
+                            <input type="text" id="exp-company" class="input-style" placeholder="e.g. Radar Banten">
+                        </div>
+                        <div>
+                            <label for="exp-role" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Role / Job Title</label>
+                            <input type="text" id="exp-role" class="input-style" placeholder="e.g. Graphic Design Intern">
+                        </div>
+                        <div>
+                            <label for="exp-duration" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Duration</label>
+                            <input type="text" id="exp-duration" class="input-style" placeholder="e.g. Sep 2024 - Present">
+                        </div>
+                        <div>
+                            <label for="exp-location" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Location</label>
+                            <input type="text" id="exp-location" class="input-style" placeholder="e.g. Serang, Banten">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="exp-logo-url" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Company Logo URL</label>
+                        <input type="url" id="exp-logo-url" class="input-style" placeholder="https://example.com/logo.png">
+                    </div>
+
+                    <div>
+                        <label for="exp-description" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Short Job Description</label>
+                        <textarea id="exp-description" rows="2" class="input-style resize-none" placeholder="Summarize your responsibilities..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="exp-portfolio-url" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">External Portfolio URL</label>
+                        <p class="text-[0.65rem] text-secondary mb-3"><i class="fas fa-info-circle"></i> Link to an external website showcasing your works for this company.</p>
+                        <input type="url" id="exp-portfolio-url" class="input-style" placeholder="https://notion.so/...">
+                    </div>
+                </form>
+
+                <!-- Shortlink Form -->
+                <form id="shortlink-form" class="p-6 sm:p-8 space-y-6 hidden">
+                     <div>
+                        <label for="shortlink-slug" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Short Link (Slug)</label>
+                        <div class="relative flex items-center">
+                            <span class="absolute left-4 text-secondary font-medium">ardhan.my.id/</span>
+                            <input type="text" id="shortlink-slug" class="input-style pl-[110px]" placeholder="cv">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="shortlink-url" class="block text-[0.75rem] font-bold text-secondary mb-2 uppercase tracking-wider">Original Destination URL</label>
+                        <input type="url" id="shortlink-url" class="input-style" placeholder="https://your-long-url.com/...">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="flex justify-end p-6 sm:px-8 border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 flex-shrink-0 gap-3">
+                 <button type="button" id="cancel-btn" class="px-6 py-2.5 font-bold rounded-full glass-element text-secondary hover:text-primary transition-all">Cancel</button>
+                <button id="save-item-btn" class="px-8 py-2.5 font-bold rounded-full bg-sky-500 text-white interactive-btn shadow-md hover:bg-sky-400 hover:shadow-sky-500/25 transition-all">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+        import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp, getDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+        async function initializeAdminPanel() {
+            try {
+                const response = await fetch('/.netlify/functions/firebase-config');
+                if (!response.ok) throw new Error(`Firebase config fetch failed: ${response.statusText}`);
+                const firebaseConfig = await response.json();
+
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                let currentCollection = 'projects';
+                let unsubscribe;
+                
+                // Analytics State Variables
+                let allVisitsData = [];
+                let currentVisitFilter = 'all'; 
+
+                // Shared Quill Configuration
+                const quillConfig = {
+                    theme: 'snow',
+                    modules: { toolbar: [ [{'header': [1,2,3,false]}], ['bold','italic','underline','strike'], ['blockquote','code-block'], [{'list':'ordered'},{'list':'bullet'}], ['link','image','video'], ['clean'] ] }
+                };
+                
+                // Initialize dedicated editors
+                const quillProject = new Quill('#project-quill-editor', quillConfig);
+
+                onAuthStateChanged(auth, user => {
+                    document.getElementById('login-section').classList.toggle('hidden', !!user);
+                    document.getElementById('admin-panel').classList.toggle('hidden', !user);
+                    if (user) setupDashboard();
+                    else if (unsubscribe) unsubscribe();
+                });
+
+                document.getElementById('login-form').addEventListener('submit', e => {
+                    e.preventDefault();
+                    signInWithEmailAndPassword(auth, e.target.email.value, e.target.password.value)
+                        .catch(err => document.getElementById('login-error').textContent = err.message);
+                });
+
+                document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
+                
+                function setupDashboard() {
+                    setupNavListeners();
+                    setupMobileNav();
+                    switchView('projects');
+                    setupModalListeners();
+                }
+
+                function switchView(collectionName) {
+                    currentCollection = collectionName;
+                    const title = collectionName === 'visits' ? 'Analytics' : `${collectionName.charAt(0).toUpperCase() + collectionName.slice(1)}`;
+                    document.getElementById('main-content-title').textContent = title;
+                    document.getElementById('mobile-header-title').textContent = title;
+
+                    const addNewBtn = document.getElementById('add-new-btn');
+                    const contentArea = document.getElementById('content-area');
+
+                    // Adjust Grid Classes dynamically. Give Analytics a full-width container for graphs.
+                    if (collectionName === 'visits') {
+                        addNewBtn.style.display = 'none';
+                        contentArea.className = "grid grid-cols-1 gap-6";
+                    } else {
+                        addNewBtn.style.display = 'flex';
+                        contentArea.className = "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6";
+                    }
+
+                    document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+                    document.getElementById(`${collectionName}-link`).classList.add('active');
+                    
+                    if (unsubscribe) unsubscribe();
+                    
+                    contentArea.innerHTML = `<div class="col-span-full flex justify-center py-24 text-secondary"><i class="fas fa-circle-notch fa-spin text-4xl text-sky-500"></i></div>`;
+                    
+                    let q;
+                    if (collectionName === 'visits') {
+                        q = query(collection(db, currentCollection), orderBy("visitedAt", "desc"));
+                    } else {
+                        q = collection(db, currentCollection);
+                    }
+
+                    unsubscribe = onSnapshot(q, snapshot => {
+                        const items = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                        if (collectionName === 'shortlinks') {
+                            renderShortlinks(items);
+                        } else if (collectionName === 'experience') {
+                            renderExperience(items);
+                        } else if (collectionName === 'visits') {
+                            allVisitsData = items;
+                            renderVisits(); // Call without params to utilize global filtered state
+                        } else {
+                            renderProjects(items);
+                        }
+                    });
+                }
+
+                function renderProjects(items) {
+                    const container = document.getElementById('content-area');
+                    if (items.length === 0) {
+                        container.innerHTML = emptyStateHTML('folder-open', 'No Projects Yet');
+                        return;
+                    }
+                    container.innerHTML = items.sort((a,b) => b.createdAt?.toMillis() - a.createdAt?.toMillis()).map(item => {
+                        const tagHtml = item.tag ? `<span class="inline-flex items-center text-[0.6rem] font-extrabold uppercase tracking-widest text-secondary bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 px-2 py-0.5 rounded-md mb-2 w-fit">${item.tag}</span>` : '';
+                        const descHtml = item.description ? `<p class="text-[0.85rem] text-secondary mb-4 line-clamp-2 font-medium leading-relaxed">${item.description}</p>` : `<p class="text-[0.8rem] text-secondary/50 mb-4 italic">No custom description.</p>`;
+                        
+                        return `
+                        <div class="glass-element rounded-[1.5rem] flex flex-col group hover:border-black/20 dark:hover:border-white/20 transition-all duration-300">
+                            <div class="p-6 flex-grow flex flex-col">
+                                ${tagHtml}
+                                <h3 class="font-extrabold text-primary text-[1.1rem] mb-2 group-hover:text-sky-500 transition-colors">${item.title}</h3>
+                                ${descHtml}
+                                <div class="mt-auto pt-4 border-t border-black/5 dark:border-white/5 flex flex-wrap gap-2 items-center justify-between">
+                                    <span class="text-[0.7rem] font-semibold text-secondary flex items-center gap-1.5"><i class="far fa-clock"></i> ${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleDateString() : 'N/A'}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        ${item.isFeatured ? `<span class="text-[0.65rem] font-bold uppercase tracking-wider inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"><i class="fas fa-star mr-1"></i>Featured</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-t border-black/5 dark:border-white/5 p-4 flex justify-end items-center space-x-2 bg-black/5 dark:bg-white/5 rounded-b-[1.5rem]">
+                                <button class="edit-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-sky-500 hover:bg-black/10 dark:hover:bg-white/10 transition-colors" data-id="${item.id}" aria-label="Edit"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="delete-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-rose-500 hover:bg-black/10 dark:hover:bg-white/10 transition-colors" data-id="${item.id}" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`
+                    }).join('');
+                    attachCardListeners(container);
+                }
+
+                function renderExperience(items) {
+                    const container = document.getElementById('content-area');
+                    if (items.length === 0) {
+                        container.innerHTML = emptyStateHTML('briefcase', 'No Experience Added');
+                        return;
+                    }
+                    container.innerHTML = items.sort((a,b) => b.createdAt?.toMillis() - a.createdAt?.toMillis()).map(item => {
+                        const logoHtml = item.logoUrl 
+                            ? `<img src="${item.logoUrl}" alt="${item.company}" class="w-full h-full object-cover rounded-[1rem] bg-white" onerror="this.src='https://placehold.co/100x100?text=${item.company ? item.company.charAt(0) : 'E'}';">`
+                            : `<div class="w-full h-full flex items-center justify-center text-white text-[1.2rem] font-bold bg-slate-800 rounded-[1rem]">${item.company ? item.company.charAt(0) : 'E'}</div>`;
+                            
+                        const portfolioBtn = item.portfolioUrl 
+                            ? `<a href="${item.portfolioUrl}" target="_blank" class="mt-4 text-[0.7rem] font-bold uppercase tracking-wider inline-flex items-center px-4 py-2 rounded-full bg-sky-500/10 text-sky-500 border border-sky-500/20 hover:bg-sky-500 hover:text-white transition-colors"><i class="fas fa-external-link-alt mr-1.5"></i> View Works</a>` 
+                            : '';
+                        
+                        return `
+                        <div class="glass-element rounded-[1.5rem] flex flex-col group hover:border-black/20 dark:hover:border-white/20 transition-all duration-300">
+                            <div class="p-6 flex-grow flex flex-col">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 shrink-0 rounded-[1rem] shadow-sm border border-black/10 dark:border-white/10 relative">
+                                        ${logoHtml}
+                                    </div>
+                                    <div>
+                                        <span class="text-[0.75rem] font-bold text-secondary uppercase tracking-wider">${item.company}</span>
+                                        <h3 class="font-extrabold text-primary text-[1.1rem] leading-tight">${item.role}</h3>
+                                    </div>
+                                </div>
+                                <p class="text-[0.85rem] text-secondary mb-2 line-clamp-2 font-medium leading-relaxed">${item.description || '<span class="italic opacity-50">No description...</span>'}</p>
+                                ${portfolioBtn}
+                                <div class="mt-auto pt-4 border-t border-black/5 dark:border-white/5 flex flex-wrap gap-2 items-center justify-between">
+                                    <span class="text-[0.7rem] font-semibold text-secondary flex items-center gap-1.5"><i class="far fa-calendar"></i> ${item.duration || 'N/A'}</span>
+                                    <span class="text-[0.7rem] font-semibold text-secondary flex items-center gap-1.5"><i class="fas fa-map-marker-alt"></i> ${item.location || 'N/A'}</span>
+                                </div>
+                            </div>
+                            <div class="border-t border-black/5 dark:border-white/5 p-4 flex justify-end items-center space-x-2 bg-black/5 dark:bg-white/5 rounded-b-[1.5rem]">
+                                <button class="edit-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-sky-500 hover:bg-black/10 dark:hover:bg-white/10 transition-colors" data-id="${item.id}" aria-label="Edit"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="delete-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-rose-500 hover:bg-black/10 dark:hover:bg-white/10 transition-colors" data-id="${item.id}" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`
+                    }).join('');
+                    attachCardListeners(container);
+                }
+
+                function renderShortlinks(items) {
+                    const container = document.getElementById('content-area');
+                     if (items.length === 0) {
+                        container.innerHTML = emptyStateHTML('link', 'No Shortlinks');
+                        return;
+                    }
+                    container.innerHTML = items.map(item => `
+                        <div class="glass-element rounded-[1.5rem] p-6 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300">
+                            <div class="flex justify-between items-start gap-4">
+                                <div class="overflow-hidden">
+                                    <p class="text-[0.9rem] font-bold text-sky-500 mb-1 truncate">ardhan.my.id/${item.id}</p>
+                                    <p class="text-secondary text-[0.8rem] truncate opacity-70">${item.url}</p>
+                                </div>
+                                <button class="delete-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-rose-500 hover:bg-black/10 dark:hover:bg-white/10 transition-colors flex-shrink-0" data-id="${item.id}" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`).join('');
+                    container.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', handleDelete));
+                }
+
+                // ==========================================
+                // ENTERPRISE ANALYTICS DASHBOARD
+                // ==========================================
+                function renderVisits() {
+                    const container = document.getElementById('content-area');
+                    if (allVisitsData.length === 0) {
+                        container.innerHTML = emptyStateHTML('chart-line', 'No Visits Recorded');
+                        return;
+                    }
+
+                    const now = Date.now();
+                    const startOfToday = new Date(new Date().setHours(0,0,0,0)).getTime();
+                    
+                    // 1. Apply Time Filter
+                    const filteredData = allVisitsData.filter(item => {
+                        const time = (item.visitedAt && item.visitedAt.toMillis) ? item.visitedAt.toMillis() : Date.now();
+                        if (currentVisitFilter === 'today') return time >= startOfToday;
+                        if (currentVisitFilter === 'week') return time >= now - 7*24*60*60*1000;
+                        if (currentVisitFilter === 'month') return time >= now - 30*24*60*60*1000;
+                        return true;
+                    });
+
+                    // 2. Data Aggregation Engines
+                    const countryMap = {}, cityMap = {}, ispMap = {}, deviceMap = {};
+                    let uniqueIPs = new Set();
+
+                    // Dynamic Timeline Buckets
+                    const timelineLabels = [];
+                    const timelineData = [];
+                    if (currentVisitFilter === 'today') {
+                        for(let i=0; i<24; i++) { timelineLabels.push(i+':00'); timelineData.push(0); }
+                    } else {
+                        const days = currentVisitFilter === 'month' ? 30 : (currentVisitFilter === 'all' ? 14 : 7);
+                        for(let i=days-1; i>=0; i--) {
+                            timelineLabels.push(new Date(now - i*86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                            timelineData.push(0);
+                        }
+                    }
+
+                    filteredData.forEach(item => {
+                        const timeStr = (item.visitedAt && item.visitedAt.toMillis) ? item.visitedAt.toMillis() : Date.now();
+                        const dateObj = new Date(timeStr);
+                        
+                        // Populate Timeline Graph Data
+                        if (currentVisitFilter === 'today') {
+                            timelineData[dateObj.getHours()]++;
+                        } else {
+                            const dStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            const idx = timelineLabels.indexOf(dStr);
+                            if(idx !== -1) timelineData[idx]++;
+                        }
+
+                        // Populate Map Trackers
+                        const country = item.country || 'Unknown';
+                        const city = item.city || 'Unknown';
+                        const isp = item.isp || 'Unknown';
+                        const device = item.deviceType || 'Unknown';
+                        
+                        uniqueIPs.add(item.ip || 'Unknown');
+                        countryMap[country] = (countryMap[country] || 0) + 1;
+                        cityMap[city] = (cityMap[city] || 0) + 1;
+                        ispMap[isp] = (ispMap[isp] || 0) + 1;
+                        deviceMap[device] = (deviceMap[device] || 0) + 1;
+                    });
+
+                    // Sorting Helper to grab Top N items
+                    const getSortedData = (map, limit=5) => Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,limit);
+                    
+                    const topCountries = getSortedData(countryMap, 5);
+                    const topCities = getSortedData(cityMap, 5);
+                    const topIsps = getSortedData(ispMap, 5);
+                    const topDevices = getSortedData(deviceMap, 4);
+
+                    // 3. Build the Upper Dashboard HTML
+                    container.innerHTML = `
+                    <div class="col-span-full">
+                        
+                        <!-- Header & Date Filters -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 relative z-10">
+                            <h2 class="text-[1.3rem] font-extrabold text-primary flex items-center gap-3"><i class="fas fa-chart-line text-sky-500"></i> Traffic Dashboard</h2>
+                            <div class="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl shadow-inner border border-black/5 dark:border-white/5 overflow-x-auto w-full md:w-auto">
+                                ${['today', 'week', 'month', 'all'].map(f => `
+                                    <button class="visit-filter-btn px-4 py-1.5 rounded-lg text-[0.75rem] font-bold uppercase tracking-wider transition-all duration-300 ${currentVisitFilter === f ? 'bg-white dark:bg-slate-800 shadow-sm text-sky-500' : 'text-secondary hover:text-primary'} whitespace-nowrap" data-filter="${f}">
+                                        ${f === 'week' ? '7 Days' : f === 'month' ? '30 Days' : f}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Main KPIs -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="glass-element p-5 rounded-[1.2rem] flex flex-col relative overflow-hidden">
+                                <div class="absolute -right-2 -top-2 text-sky-500/10 text-6xl"><i class="fas fa-eye"></i></div>
+                                <span class="text-[0.65rem] uppercase tracking-widest font-extrabold text-secondary mb-1">Total Visits</span>
+                                <span class="text-3xl font-extrabold text-primary relative z-10">${filteredData.length}</span>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.2rem] flex flex-col relative overflow-hidden">
+                                <div class="absolute -right-2 -top-2 text-indigo-500/10 text-6xl"><i class="fas fa-user-secret"></i></div>
+                                <span class="text-[0.65rem] uppercase tracking-widest font-extrabold text-secondary mb-1">Unique IPs</span>
+                                <span class="text-3xl font-extrabold text-primary relative z-10">${uniqueIPs.size}</span>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.2rem] flex flex-col relative overflow-hidden">
+                                <div class="absolute -right-2 -top-2 text-emerald-500/10 text-6xl"><i class="fas fa-globe"></i></div>
+                                <span class="text-[0.65rem] uppercase tracking-widest font-extrabold text-secondary mb-1">Top Country</span>
+                                <span class="text-xl font-bold text-primary relative z-10 truncate mt-1">${topCountries.length ? topCountries[0][0] : 'N/A'}</span>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.2rem] flex flex-col relative overflow-hidden">
+                                <div class="absolute -right-2 -top-2 text-rose-500/10 text-6xl"><i class="fas fa-city"></i></div>
+                                <span class="text-[0.65rem] uppercase tracking-widest font-extrabold text-secondary mb-1">Top City</span>
+                                <span class="text-xl font-bold text-primary relative z-10 truncate mt-1">${topCities.length ? topCities[0][0] : 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <!-- Graphical Charts Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="lg:col-span-3 glass-element p-5 rounded-[1.5rem]">
+                                <h3 class="text-[0.75rem] font-bold text-secondary uppercase tracking-widest mb-4">Traffic Timeline</h3>
+                                <div class="h-64 w-full"><canvas id="chart-timeline"></canvas></div>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.5rem]">
+                                <h3 class="text-[0.75rem] font-bold text-secondary uppercase tracking-widest mb-4">Top Countries</h3>
+                                <div class="h-48 w-full"><canvas id="chart-countries"></canvas></div>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.5rem]">
+                                <h3 class="text-[0.75rem] font-bold text-secondary uppercase tracking-widest mb-4">Top Providers (ISP)</h3>
+                                <div class="h-48 w-full"><canvas id="chart-isps"></canvas></div>
+                            </div>
+                            <div class="glass-element p-5 rounded-[1.5rem]">
+                                <h3 class="text-[0.75rem] font-bold text-secondary uppercase tracking-widest mb-4">Device Types</h3>
+                                <div class="h-48 w-full"><canvas id="chart-devices"></canvas></div>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-black/10 dark:bg-white/10 w-full my-6"></div>
+                        <h2 class="text-[1.2rem] font-extrabold text-primary flex items-center gap-2 mb-4"><i class="fas fa-list text-sky-500"></i> Individual Detailed Logs</h2>
+                        
+                        <!-- Detailed Logs Grid Container -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="logs-container"></div>
+                    </div>`;
+
+                    // 4. Populate Detailed Logs underneath Dashboard
+                    const logsContainer = document.getElementById('logs-container');
+                    logsContainer.innerHTML = filteredData.map(item => {
+                        const timeStr = item.visitedAt ? new Date(item.visitedAt.toDate()).toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }) : 'Just now';
+                        return `
+                        <div class="glass-element rounded-[1.5rem] p-5 sm:p-6 flex flex-col hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 shadow-sm relative overflow-hidden">
+                            <div class="absolute -right-4 -top-4 w-32 h-32 bg-sky-500/5 rounded-full blur-[40px] pointer-events-none"></div>
+
+                            <div class="flex justify-between items-start mb-5 relative z-10 gap-4">
+                                <div>
+                                    <h3 class="font-extrabold text-primary text-[1.15rem] flex items-center gap-2 tracking-tight">
+                                        <i class="fas fa-map-marker-alt text-rose-500"></i>
+                                        ${item.city !== 'Unknown' ? item.city + ', ' + item.country : 'Unknown Location'}
+                                    </h3>
+                                    <p class="text-[0.8rem] text-secondary font-medium mt-1"><i class="fas fa-network-wired mr-1.5 opacity-60"></i> ${item.ip} &middot; ${item.isp}</p>
+                                </div>
+                                <span class="text-[0.65rem] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-md shadow-sm tracking-wider uppercase text-right shrink-0">
+                                    ${timeStr} WIB
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 relative z-10">
+                                <div class="bg-black/5 dark:bg-white/5 rounded-[1rem] p-3.5 flex flex-col border border-black/5 dark:border-white/5">
+                                    <span class="text-[0.6rem] uppercase tracking-widest font-extrabold text-secondary mb-1.5 flex items-center gap-1.5"><i class="fas fa-laptop text-sky-500"></i> Platform & Screen</span>
+                                    <span class="text-[0.85rem] font-bold text-primary break-words">${item.platform || 'Unknown OS'}</span>
+                                    <span class="text-[0.7rem] text-secondary mt-0.5">${item.deviceType || 'Unknown'} &middot; ${item.screenWidth || '0'}x${item.screenHeight || '0'}</span>
+                                </div>
+                                <div class="bg-black/5 dark:bg-white/5 rounded-[1rem] p-3.5 flex flex-col border border-black/5 dark:border-white/5">
+                                    <span class="text-[0.6rem] uppercase tracking-widest font-extrabold text-secondary mb-1.5 flex items-center gap-1.5"><i class="fas fa-microchip text-indigo-500"></i> Compute & Network</span>
+                                    <span class="text-[0.85rem] font-bold text-primary">${item.cores || 'N/A'} Cores, ${item.ram || 'N/A'} RAM</span>
+                                    <span class="text-[0.7rem] text-secondary mt-0.5">${item.connectionType || 'Unknown'} Connection</span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-3 mb-5 relative z-10">
+                                <div class="bg-black/5 dark:bg-white/5 rounded-[1rem] p-3.5 flex flex-col border border-black/5 dark:border-white/5">
+                                    <span class="text-[0.6rem] uppercase tracking-widest font-extrabold text-secondary mb-1.5 flex items-center gap-1.5"><i class="fas fa-gamepad text-emerald-500"></i> GPU Renderer</span>
+                                    <span class="text-[0.75rem] font-bold text-primary break-words leading-relaxed">${item.gpu || 'N/A'}</span>
+                                </div>
+                                <div class="bg-black/5 dark:bg-white/5 rounded-[1rem] p-3.5 flex flex-col border border-black/5 dark:border-white/5">
+                                    <span class="text-[0.6rem] uppercase tracking-widest font-extrabold text-secondary mb-1.5 flex items-center gap-1.5"><i class="fas fa-user-secret text-amber-500"></i> User Agent</span>
+                                    <span class="text-[0.7rem] font-medium text-secondary break-all leading-relaxed">${item.userAgent || 'Unknown'}</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto pt-4 border-t border-black/5 dark:border-white/5 flex items-center justify-between relative z-10 gap-4">
+                                <div class="flex items-center gap-2 text-[0.8rem] text-primary font-bold overflow-hidden">
+                                    <i class="fas fa-link text-sky-500 opacity-80 shrink-0"></i> 
+                                    <span class="opacity-60 font-medium shrink-0">Path:</span> 
+                                    <span class="break-all">${item.path || '/'}</span>
+                                </div>
+                                <button class="delete-btn w-10 h-10 rounded-full glass-element text-secondary hover:text-rose-500 hover:bg-rose-500/10 transition-colors shrink-0 flex items-center justify-center" data-id="${item.id}" aria-label="Delete Log"><i class="fas fa-trash text-[0.85rem]"></i></button>
+                            </div>
+                        </div>`;
+                    }).join('');
+
+                    // 5. Attach Listeners for Filters & Deletion
+                    logsContainer.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', handleDelete));
+                    container.querySelectorAll('.visit-filter-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            currentVisitFilter = e.currentTarget.dataset.filter;
+                            renderVisits(); // Re-render graphs based on new timescale
+                        });
+                    });
+
+                    // 6. Draw Chart.js Graphs
+                    Chart.defaults.color = document.documentElement.classList.contains('dark') ? '#94a3b8' : '#475569';
+                    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+                    
+                    const destroyChart = (id) => { if(window[id]) window[id].destroy(); }
+                    const bgColors = ['rgba(14, 165, 233, 0.7)', 'rgba(99, 102, 241, 0.7)', 'rgba(168, 85, 247, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(245, 158, 11, 0.7)'];
+                    const borderColors = ['#0ea5e9', '#6366f1', '#a855f7', '#10b981', '#f59e0b'];
+
+                    // 1. Timeline Chart (Line)
+                    destroyChart('ctxTimeline');
+                    window.ctxTimeline = new Chart(document.getElementById('chart-timeline'), {
+                        type: 'line',
+                        data: { labels: timelineLabels, datasets: [{ label: 'Visits', data: timelineData, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.1)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0ea5e9' }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(148, 163, 184, 0.1)' } }, x: { grid: { display: false } } } }
+                    });
+
+                    // 2. Countries Chart (Doughnut)
+                    destroyChart('ctxCountries');
+                    window.ctxCountries = new Chart(document.getElementById('chart-countries'), {
+                        type: 'doughnut',
+                        data: { labels: topCountries.map(d=>d[0]), datasets: [{ data: topCountries.map(d=>d[1]), backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } }, cutout: '65%' }
+                    });
+
+                    // 3. ISPs Chart (Bar)
+                    destroyChart('ctxIsps');
+                    window.ctxIsps = new Chart(document.getElementById('chart-isps'), {
+                        type: 'bar',
+                        data: { labels: topIsps.map(d=>d[0].length > 15 ? d[0].substring(0,15)+'...' : d[0]), datasets: [{ data: topIsps.map(d=>d[1]), backgroundColor: bgColors, borderRadius: 4 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(148, 163, 184, 0.1)' } } } }
+                    });
+
+                    // 4. Devices Chart (Doughnut)
+                    destroyChart('ctxDevices');
+                    window.ctxDevices = new Chart(document.getElementById('chart-devices'), {
+                        type: 'doughnut',
+                        data: { labels: topDevices.map(d=>d[0]), datasets: [{ data: topDevices.map(d=>d[1]), backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } }, cutout: '65%' }
+                    });
+                }
+
+                function emptyStateHTML(icon, title) {
+                    return `<div class="col-span-full flex flex-col items-center justify-center py-20 text-secondary glass-element rounded-[2rem] border border-white/10 border-dashed">
+                            <i class="fas fa-${icon} text-5xl mb-4 opacity-30"></i>
+                            <p class="text-sm font-bold tracking-wider uppercase">${title}</p>
+                        </div>`;
+                }
+
+                function attachCardListeners(container) {
+                    container.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', handleEdit));
+                    container.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', handleDelete));
+                }
+
+                function setupNavListeners() {
+                    document.getElementById('projects-link').addEventListener('click', (e) => { e.preventDefault(); switchView('projects'); });
+                    document.getElementById('experience-link').addEventListener('click', (e) => { e.preventDefault(); switchView('experience'); });
+                    document.getElementById('shortlinks-link').addEventListener('click', (e) => { e.preventDefault(); switchView('shortlinks'); });
+                    document.getElementById('visits-link').addEventListener('click', (e) => { e.preventDefault(); switchView('visits'); });
+                }
+                
+                const modal = document.getElementById('form-modal');
+                const modalContent = modal.querySelector('.modal-content');
+                
+                const projectForm = document.getElementById('project-form');
+                const experienceForm = document.getElementById('experience-form');
+                const shortlinkForm = document.getElementById('shortlink-form');
+                
+                function openModal() { 
+                    modal.classList.remove('hidden'); modal.classList.add('flex'); 
+                    setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10); 
+                }
+                
+                function closeModal() { 
+                    modal.classList.add('opacity-0'); modalContent.classList.add('scale-95'); 
+                    setTimeout(() => { 
+                        modal.classList.add('hidden'); modal.classList.remove('flex'); 
+                        projectForm.reset(); experienceForm.reset(); shortlinkForm.reset(); 
+                        projectForm.classList.add('hidden'); experienceForm.classList.add('hidden'); shortlinkForm.classList.add('hidden'); 
+                    }, 300); 
+                }
+                
+                function setupModalListeners() {
+                    document.getElementById('add-new-btn').addEventListener('click', () => {
+                        document.getElementById('global-item-id').value = '';
+                        
+                        projectForm.classList.add('hidden');
+                        experienceForm.classList.add('hidden');
+                        shortlinkForm.classList.add('hidden');
+
+                        if (currentCollection === 'shortlinks') {
+                            shortlinkForm.reset();
+                            document.getElementById('modal-title').innerHTML = `<i class="fas fa-link text-sky-500 mr-2 text-[1.1rem]"></i> Create Shortlink`;
+                            shortlinkForm.classList.remove('hidden');
+                        } else if (currentCollection === 'experience') {
+                            experienceForm.reset();
+                            document.getElementById('modal-title').innerHTML = `<i class="fas fa-briefcase text-sky-500 mr-2 text-[1.1rem]"></i> Add Experience`;
+                            experienceForm.classList.remove('hidden');
+                        } else {
+                            projectForm.reset();
+                            document.getElementById('proj-featured').checked = false;
+                            quillProject.root.innerHTML = '';
+                            document.getElementById('modal-title').innerHTML = `<i class="fas fa-plus-circle text-sky-500 mr-2 text-[1.1rem]"></i> Add Project`;
+                            projectForm.classList.remove('hidden');
+                        }
+                        openModal();
+                    });
+                    
+                    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+                    document.getElementById('cancel-btn').addEventListener('click', closeModal);
+                    document.getElementById('save-item-btn').addEventListener('click', handleSave);
+                }
+
+                function setupMobileNav() {
+                    const sidebar = document.getElementById('sidebar');
+                    const sidebarToggle = document.getElementById('sidebar-toggle');
+                    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.remove('-translate-x-full');
+                        sidebarOverlay.classList.remove('hidden');
+                        setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10);
+                    });
+
+                    const closeSidebar = () => {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebarOverlay.classList.add('opacity-0');
+                        setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+                    };
+
+                    sidebarOverlay.addEventListener('click', closeSidebar);
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        link.addEventListener('click', () => { if(window.innerWidth < 1024) closeSidebar(); });
+                    });
+                }
+                
+                async function handleEdit(e) {
+                    const id = e.currentTarget.dataset.id;
+                    const docRef = doc(db, currentCollection, id);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const item = docSnap.data();
+                        
+                        projectForm.classList.add('hidden');
+                        experienceForm.classList.add('hidden');
+                        shortlinkForm.classList.add('hidden');
+                        
+                        document.getElementById('global-item-id').value = id;
+                        
+                        if (currentCollection === 'experience') {
+                            document.getElementById('exp-company').value = item.company || '';
+                            document.getElementById('exp-role').value = item.role || '';
+                            document.getElementById('exp-duration').value = item.duration || '';
+                            document.getElementById('exp-location').value = item.location || '';
+                            document.getElementById('exp-logo-url').value = item.logoUrl || '';
+                            document.getElementById('exp-description').value = item.description || '';
+                            document.getElementById('exp-portfolio-url').value = item.portfolioUrl || '';
+                            
+                            document.getElementById('modal-title').innerHTML = `<i class="fas fa-pen text-sky-500 mr-2 text-[1rem]"></i> Editing: ${item.company}`;
+                            experienceForm.classList.remove('hidden');
+                        } else {
+                            document.getElementById('proj-title').value = item.title || '';
+                            document.getElementById('proj-tag').value = item.tag || '';
+                            document.getElementById('proj-description').value = item.description || '';
+                            document.getElementById('proj-image').value = item.imageUrl || '';
+                            document.getElementById('proj-external-url').value = item.externalUrl || '';
+                            document.getElementById('proj-featured').checked = item.isFeatured || false; 
+                            quillProject.root.innerHTML = item.content || '';
+                            
+                            document.getElementById('modal-title').innerHTML = `<i class="fas fa-pen text-sky-500 mr-2 text-[1rem]"></i> Editing: ${item.title}`;
+                            projectForm.classList.remove('hidden');
+                        }
+                        openModal();
+                    }
+                }
+
+                async function handleDelete(e) {
+                    const id = e.currentTarget.dataset.id;
+                    if (confirm(`Delete this item? This action cannot be undone.`)) {
+                        await deleteDoc(doc(db, currentCollection, id));
+                    }
+                }
+
+                async function handleSave() {
+                    const id = document.getElementById('global-item-id').value;
+                    
+                    if (currentCollection === 'shortlinks') {
+                        const slug = document.getElementById('shortlink-slug').value.trim();
+                        const url = document.getElementById('shortlink-url').value.trim();
+                        if (!slug || !url) { alert('Please provide both a slug and an original URL.'); return; }
+                        await setDoc(doc(db, "shortlinks", slug), { url: url });
+                    } 
+                    else if (currentCollection === 'experience') {
+                        const data = {
+                            company: document.getElementById('exp-company').value.trim(),
+                            role: document.getElementById('exp-role').value.trim(),
+                            duration: document.getElementById('exp-duration').value.trim(),
+                            location: document.getElementById('exp-location').value.trim(),
+                            logoUrl: document.getElementById('exp-logo-url').value.trim(),
+                            description: document.getElementById('exp-description').value.trim(),
+                            portfolioUrl: document.getElementById('exp-portfolio-url').value.trim(),
+                        };
+                        
+                        if (!data.company || !data.role) { alert('Company and Role are required.'); return; }
+
+                        if (id) {
+                            data.updatedAt = serverTimestamp();
+                            await updateDoc(doc(db, "experience", id), data);
+                        } else {
+                            data.createdAt = serverTimestamp();
+                            await addDoc(collection(db, "experience"), data);
+                        }
+                    } 
+                    else {
+                        // Projects
+                        const data = {
+                            title: document.getElementById('proj-title').value.trim(),
+                            tag: document.getElementById('proj-tag').value.trim(),
+                            description: document.getElementById('proj-description').value.trim(),
+                            imageUrl: document.getElementById('proj-image').value.trim(),
+                            externalUrl: document.getElementById('proj-external-url').value.trim(),
+                            isFeatured: document.getElementById('proj-featured').checked, 
+                            content: quillProject.root.innerHTML,
+                        };
+                        
+                        if (!data.title || !data.imageUrl) { alert('Title and Image URL are required fields.'); return; }
+
+                        if (id) {
+                            data.updatedAt = serverTimestamp();
+                            await updateDoc(doc(db, "projects", id), data);
+                        } else {
+                            data.createdAt = serverTimestamp();
+                            await addDoc(collection(db, "projects"), data);
+                        }
+                    }
+                    closeModal();
+                }
+
+                // Theme Initialization
+                const themeToggle = document.getElementById('theme-toggle');
+                const htmlElement = document.documentElement;
+                function applyTheme(theme) {
+                    htmlElement.classList.toggle('dark', theme === 'dark');
+                    htmlElement.classList.toggle('light', theme !== 'dark');
+                    themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-sun w-7 text-yellow-500"></i><span>Light Mode</span>' : '<i class="fas fa-moon w-7 text-indigo-500"></i><span>Dark Mode</span>';
+                }
+                const savedTheme = localStorage.getItem('theme') || 'dark'; // Inherit Dark default like index
+                applyTheme(savedTheme);
+                themeToggle.addEventListener('click', () => {
+                    const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+                    applyTheme(newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+
+            } catch (error) {
+                console.error("Failed to initialize admin panel:", error);
+                document.body.innerHTML = `<div class="flex items-center justify-center min-h-screen p-4 glass-element text-center"><div><i class="fas fa-exclamation-triangle fa-3x text-rose-500 mb-4"></i><h1 class="text-2xl font-bold text-primary">Initialization Failed</h1><p class="text-secondary mt-2">Could not connect to database. Check console logs.</p></div></div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeAdminPanel);
+    </script>
+</body>
+</html>
